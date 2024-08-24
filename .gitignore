@@ -1,0 +1,8 @@
+.venv
+json_dump.json
+json_dumps.json
+ujson_dump.json
+ujson_dumps.json
+orjson_dump.json
+orjson_dumps.json
+volumes
