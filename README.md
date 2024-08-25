@@ -58,6 +58,24 @@ orjson.dumps(): 0.9342 s
 ```
 
 ```bash
+$ python compare_contents.py
+json.dump()
+  consistency: True
+json.dumps()
+  consistency: True
+ujson.dump()
+  consistency: True
+ujson.dumps()
+  consistency: True
+orjson.dumps()
+  consistency: True
+orjson.dumps(), with cast string
+  consistency: True
+orjson.dumps() and json.loads()
+  consistency: True
+```
+
+```bash
 # Command
 $ awk '
 /^Cached:|^Active\(file\):|^Inactive\(file\):/ {
