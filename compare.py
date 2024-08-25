@@ -14,12 +14,13 @@ _ = {
 }
 sample_data = [_] * 100000  # 大きなデータセットを作成
 
-# kaggle dataset: https://www.kaggle.com/datasets/melissamonfared/mental-health-counseling-conversations-k
+# kaggle dataset:
+# https://www.kaggle.com/datasets/melissamonfared/mental-health-counseling-conversations-k
 with open("combined_dataset.json", "rb") as f:
     combined_dataset = [orjson.loads(line) for line in f] * 100
 
 
-def comparison(data):
+def compare(data):
     # json.dump() の速度測定
     start_time = time.time()
     with open("json_dump.json", "w") as f:
@@ -29,9 +30,9 @@ def comparison(data):
 
     # json.dumps() の速度測定
     start_time = time.time()
-    json_string = json.dumps(data)
+    json_data = json.dumps(data)
     with open("json_dumps.json", "w") as f:
-        f.write(json_string)
+        f.write(json_data)
     end_time = time.time()
     print(f"json.dumps()  : {end_time - start_time:.4f} s")
 
@@ -44,18 +45,11 @@ def comparison(data):
 
     # ujson.dumps() の速度測定
     start_time = time.time()
-    ujson_string = ujson.dumps(data)
+    ujson_data = ujson.dumps(data)
     with open("ujson_dumps.json", "w") as f:
-        f.write(ujson_string)
+        f.write(ujson_data)
     end_time = time.time()
     print(f"ujson.dumps() : {end_time - start_time:.4f} s")
-
-    # orjson.dump() の速度測定
-    start_time = time.time()
-    with open("orjson_dump.json", "wb") as f:
-        f.write(orjson.dumps(data))
-    end_time = time.time()
-    print(f"orjson.dump() : {end_time - start_time:.4f} s")
 
     # orjson.dumps() の速度測定
     start_time = time.time()
@@ -65,10 +59,18 @@ def comparison(data):
     end_time = time.time()
     print(f"orjson.dumps(): {end_time - start_time:.4f} s")
 
+    # orjson.dumps() with cast string の速度測定
+    start_time = time.time()
+    orjson_data = orjson.dumps(data).decode("utf-8")
+    with open("orjson_dumps_with_cast_string.json", "w") as f:
+        f.write(orjson_data)
+    end_time = time.time()
+    print(f"orjson.dumps(): {end_time - start_time:.4f} s, with cast string")
+
 
 def log_and_compare(data, label):
     print(f"Data: {label}")
-    comparison(data)
+    compare(data)
     time.sleep(5)
 
 

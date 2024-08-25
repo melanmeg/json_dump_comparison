@@ -11,37 +11,29 @@ _ = {
     "skills": {"Python": "advanced", "C++": "intermediate", "Go": "beginner"},
     "friends": [{"name": "Bob", "age": 28}, {"name": "Charlie", "age": 32}],
 }
-sample_data = [_] * 1000000  # 大きなデータセットを作成
+sample_data = [_] * 1000000
 
-# kaggle dataset: https://www.kaggle.com/datasets/melissamonfared/mental-health-counseling-conversations-k
 with open("combined_dataset.json", "rb") as f:
-    combined_dataset = [orjson.loads(line) for line in f] * 1000
+    combined_dataset = [orjson.loads(line) for line in f] * 500
 
 
 def json_dumps(data):
-    # json.dumps() の速度測定
     start_time = time.time()
-    json_string = json.dumps(data)
-    with open("json_dumps.json", "w") as f:
-        f.write(json_string)
+    json.dumps(data)
     end_time = time.time()
-    print(f"json.dumps()  : {end_time - start_time:.4f} s")
+    return f"{end_time - start_time:.4f} s"
 
 
 def orjson_dumps(data):
-    # orjson.dumps() の速度測定
     start_time = time.time()
-    orjson_data = orjson.dumps(data)
-    with open("orjson_dumps.json", "wb") as f:
-        f.write(orjson_data)
+    orjson.dumps(data)
     end_time = time.time()
-    print(f"orjson.dumps(): {end_time - start_time:.4f} s")
+    return f"{end_time - start_time:.4f} s"
 
 
 def log_and_dump(data, label, dump_function):
-    print(f"Data: {label}, {dump_function.__name__}")
-    dump_function(data)
-    time.sleep(5)
+    print(f"Time: {dump_function(data)}, Data: {label}, Func: {dump_function.__name__}")
+    time.sleep(10)
 
 
 log_and_dump(sample_data, "sample_data", json_dumps)
