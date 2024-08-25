@@ -1,6 +1,8 @@
 # json_dump_compare
 そこそこ巨大なjsonデータの書き出し時のパフォーマンスについて計測比較してみた。
 
+**※先に結論としては、orjsonを使ってチャンク分割するのが高速であろうという結果に至った。**
+
 # 環境
 - Ubuntu24.04
 - CPU: 4, Memory: 8GB
@@ -179,7 +181,7 @@ $ cat /proc/sys/vm/vfs_cache_pressure
 ```
 
 
-- test
+以下検証
 ```bash
 $ sudo vim /etc/sysctl.d/99-custom.conf
 vm.dirty_background_ratio=1
@@ -208,8 +210,8 @@ $ awk '
 - そもそもGB単位のjsonファイルをそのままダンプする状況が滅多になさそう。
   - 再度処理が走るとクリアされることもあるので、ずっと増え続けることはなさそう。
 - チャンク分割で回避できる。チャンク分割の方が高速かも。
-  - 結論、数MBからこれをチャンク分割をするで良い気がする
+  - **結論、数MBからこれをチャンク分割をするで良い気がする**
 
 ```bash
-$ python cache-test4.py
+$ python chunk-split-test.py
 ```
