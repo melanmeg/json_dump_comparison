@@ -9,3 +9,6 @@ orjson_dump.json
 orjson_dumps.json
 orjson_dumps.tmp*.json
 orjson_dumps_with_cast_string.json
+tmp
+old
+orjson_dumps_chunk_*.json

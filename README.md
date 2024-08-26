@@ -1,13 +1,16 @@
 # json_dump_compare
-そこそこ巨大なjsonデータの書き出し時のパフォーマンスについて計測比較してみた。
 
-**※先に結論としては、orjsonを使ってチャンク分割するのが高速であろうという結果に至った。**
+そこそこ巨大な json データの書き出し時のパフォーマンスについて計測比較してみた。
+
+**※先に結論としては、orjson が高速。書き込みキャッシュのメモリ圧迫が気になるならチャンク分割を検討する**
 
 # 環境
+
 - Ubuntu24.04
 - CPU: 4, Memory: 8GB
 
 ## 使用データ
+
 - 自前のサンプルデータ（sample_data）
 - kaggle dataset (combined_dataset.json) : https://www.kaggle.com/datasets/melissamonfared/mental-health-counseling-conversations-k
 
@@ -117,11 +120,12 @@ $ python mem_compare_non_disk_write.py
 
 ### 考察
 
-- json.dumpが特に遅い
+- json.dump が特に遅い
 - ディスク書き込みをするとページキャッシュがそこそこ大きくなる（長らくクリアされなさそう）
-- 2回目実行すると謎にキャッシュがリフレッシュされて実行される
+- 2 回目実行すると謎にキャッシュがリフレッシュされて実行される
 
 ### ページキャッシュとは
+
 ![Page Cahce](./page-cache.PNG)
 
 ## 番外編
@@ -175,6 +179,7 @@ Inactive(file):            4.10 GB
 5. 作成されたファイルを削除するとキャッシュもクリアされた。
 
 ### ページキャッシュはずっとクリアされないのか？
+
 ![Page Cahce](./dirty.PNG)
 
 ```bash
@@ -198,8 +203,8 @@ $ cat /proc/sys/vm/vfs_cache_pressure
 100
 ```
 
-
 以下検証
+
 ```bash
 $ sudo vim /etc/sysctl.d/99-custom.conf
 vm.dirty_background_ratio=1
@@ -217,18 +222,19 @@ $ awk '
 }' /proc/meminfo
 ```
 
-- 2時間放置したがキャッシュクリアされなかった
+- 2 時間放置したがキャッシュクリアされなかった
 - 色々調べて、よくわからんけど消えなそう
 
-
 ### ディスク書き込みした際のページキャッシュは処理終了後にクリアできないのか？
+
 - 意図してクリアする方法が `sync; echo 3 | sudo tee /proc/sys/vm/drop_caches` を実行させるしかなさそう
 
 ### どうするか
-- そもそもGB単位のjsonファイルをそのままダンプする状況が滅多になさそう。
+
+- そもそも GB 単位の json ファイルをそのままダンプする状況が滅多になさそう。
   - 再度処理が走るとクリアされることもあるので、ずっと増え続けることはなさそう。
 - チャンク分割で回避できる。チャンク分割の方が高速かも。
-  - **結論、数MBからこれをチャンク分割をするで良い気がする**
+- チャンク分割できないデータはどうしようもない
 
 ```bash
 $ python chunk-split-test.py
